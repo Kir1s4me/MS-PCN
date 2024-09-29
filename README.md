@@ -17,7 +17,7 @@ pip install --upgrade https://github.com/unlimblue/KNN_CUDA/releases/download/0.
 ##test
 
 [pretrained MS-dataset model]()
-[MS-dataset]()
+[MS-dataset](The dataset can be obtained by contacting the corresponding author via email. email: zxb@sdust.edu.cn)
 
 ```
 bash ./scripts/test.sh 0 \
