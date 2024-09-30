@@ -446,3 +446,57 @@ class PointTransformerDecoderEntry(PointTransformerDecoder):
 #########################################################################
 ###The complete code will be published after the article is published.###
 #########################################################################
+
+class MSPCN(nn.Module):
+    def __init__(self, config, **kwargs):
+        super().__init__()
+        self.trans_dim = config.decoder_config.embed_dim
+        self.num_query = config.num_query
+        self.num_points = getattr(config, 'num_points', None)
+        self.base_model = PCTransformer(config)
+
+        if self.num_points is not None:
+            self.factor = self.num_points // self.num_query
+            assert self.num_points % self.num_query == 0
+            self.decode_head = SimpleRebuildFCLayer(self.trans_dim * 2, step=self.num_points // self.num_query)  # rebuild a cluster point
+        else:
+            self.factor = self.fold_step**2
+            self.decode_head = SimpleRebuildFCLayer(self.trans_dim * 2, step=self.fold_step**2)
+        self.increase_dim = nn.Sequential(
+            nn.Conv1d(self.trans_dim, 1024, 1),
+            nn.BatchNorm1d(1024),
+            nn.LeakyReLU(negative_slope=0.2),
+            nn.Conv1d(1024, 1024, 1)
+        )
+        self.reduce_map = nn.Linear(self.trans_dim + 1027, self.trans_dim)
+        self.build_loss_func_l1()
+        self.build_loss_func_l2()
+        self.atten_pool4 = SelfAttentionPooling(1024, 1024)
+
+    def build_loss_func_l1(self):
+        self.loss_func_l1 = ChamferDistanceL1()
+    def build_loss_func_l2(self):
+        self.loss_func_l2 = ChamferDistanceL2()
+
+    def get_loss(self, ret, gt, epoch=1):
+        pred_coarse, denoised_coarse, denoised_fine, pred_fine, low_res_supervised = ret
+        gt_fps = misc.fps(gt, int(self.num_query))
+        assert pred_fine.size(1) == gt.size(1) * 2
+        assert pred_coarse.size(1) == gt_fps.size(1)
+        assert low_res_supervised.size(1) == 1/4 * gt.size(1)
+        # denoise loss
+        idx = knn_point(self.factor, gt, denoised_coarse) # B n k
+        denoised_target = index_points(gt, idx) # B n k 3
+        denoised_target = denoised_target.reshape(gt.size(0), -1, 3)
+        assert denoised_target.size(1) == denoised_fine.size(1)
+        loss_denoised = self.loss_func_l1(denoised_fine, denoised_target)
+        loss_denoised = loss_denoised * 0.5
+        loss_supervised = self.loss_func_l2(low_res_supervised, gt)
+        loss_supervised = loss_supervised * 0.5
+        # recon loss
+        loss_coarse1 = self.loss_func_l2(pred_coarse, gt)
+        loss_coarse2 = self.loss_func_l2(pred_coarse, gt_fps)
+        loss_fine = self.loss_func_l2(pred_fine, gt)
+        loss_recon = loss_fine + loss_coarse1 + loss_coarse2 + loss_supervised
+
+        return loss_denoised, loss_recon
