@@ -14,11 +14,10 @@ pip install "git+https://github.com/erikwijmans/Pointnet2_PyTorch.git#egg=pointn
 # GPU kNN
 pip install --upgrade https://github.com/unlimblue/KNN_CUDA/releases/download/0.2/KNN_CUDA-0.2-py3-none-any.whl
 
-##test
+#test
 
 [pretrained MS-dataset model](https://pan.baidu.com/s/1fIOayjfnLPwQRVIYS-yf8Q?pwd=f5nt)
-[MS-dataset for test](https://pan.baidu.com/s/1DmffrOyEPgOCSwBFC8MAsA?pwd=mh4e)
-(More information, please contact the corresponding author via email. email: zxb@sdust.edu.cn)
+[MS-dataset](https://pan.baidu.com/s/1DmffrOyEPgOCSwBFC8MAsA?)
 
 
 ```
@@ -28,4 +27,6 @@ bash ./scripts/test.sh 0 \
     --mode easy/median/hard \ 
     --exp_name example
 ```
+
+More information, please contact the corresponding author via email. email: zxb@sdust.edu.cn
 
