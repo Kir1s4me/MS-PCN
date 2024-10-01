@@ -20,6 +20,7 @@ pip install --upgrade https://github.com/unlimblue/KNN_CUDA/releases/download/0.
 [MS-dataset for test](https://pan.baidu.com/s/1DmffrOyEPgOCSwBFC8MAsA?pwd=mh4e)
 (More information, please contact the corresponding author via email. email: zxb@sdust.edu.cn)
 
+
 ```
 bash ./scripts/test.sh 0 \
     --ckpts ./pretrained/PoinTr_ShapeNet55.pth \
