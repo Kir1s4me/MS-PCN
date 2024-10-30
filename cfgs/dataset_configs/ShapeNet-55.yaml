@@ -1,0 +1,4 @@
+NAME: ShapeNet
+DATA_PATH: data/MS-dataset/
+N_POINTS: 8192
+PC_PATH: data/MS-dataset/MS-pointcloud/
