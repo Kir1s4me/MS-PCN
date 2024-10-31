@@ -16,7 +16,7 @@ pip install --upgrade https://github.com/unlimblue/KNN_CUDA/releases/download/0.
 
 
 
-[pretrained MS-dataset model](https://pan.baidu.com/s/1fIOayjfnLPwQRVIYS-yf8Q?pwd=f5nt)
+[pretrained MS-dataset model](https://pan.baidu.com/s/1UGsfQCmkIqe9FoUUD8PGfA?pwd=8x8m)
 [MS-dataset](https://pan.baidu.com/s/1Xs4V9SLIebFQ5BYvxRhvOg?pwd=7x4i)
 
 
